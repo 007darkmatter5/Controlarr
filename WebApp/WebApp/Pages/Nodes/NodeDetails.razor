@@ -1,0 +1,85 @@
+﻿@page "/nodes/{id:int}"
+@using Shared.Entities.Nodes
+@using WebApp.Services.NodeService
+@inject INodeService NodeService
+@inject NavigationManager NavigationManager
+@* @rendermode InteractiveServer *@
+
+<PageTitle>Node Detail Page</PageTitle>
+
+<div class="form-container">
+    <div class="top-container">
+        @if (dbObject == null)
+        {
+            <span>@message</span>
+        }
+        else
+        {
+            <h3>Node overview</h3>
+            <hr />
+            <p><b>Alias: </b>@dbObject.ApplicationAlias</p>
+            <p><b>Parent Application: </b>@dbObject.ParentApplication</p>
+            <p><b>Base URL: </b>@dbObject.BaseUrl</p>
+            <p><b>API Key: </b>@dbObject.ApiKey</p>
+            <p><b>Status: </b>
+                @if (!string.IsNullOrEmpty(version))
+                {
+                    <Badge Color="Color.Success"> @version </Badge>
+                }
+                else
+                {
+                    <Badge Color="Color.Danger"> Unknown </Badge>
+                }
+            </p>
+        }
+        <button class="btn btn-primary" @onclick="(() => EditNode())">Edit</button>
+        <button class="btn btn-primary" @onclick="(() => ShowAll())">Back to Nodes</button>
+        <button class="btn btn-primary" @onclick="(() => TestNode())">Test Connection</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Node? dbObject = null;
+    private string version = string.Empty;
+    private string message = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        message = "Loading Node...";
+        var result = await NodeService.GetById(Id);
+        if (!result.Success)
+        {
+            message = result.Message;
+        }
+        else
+        {
+            dbObject = result.Data;
+        }
+    }
+
+    void ShowAll()
+    {
+        NavigationManager.NavigateTo("/nodes");
+    }
+
+    void EditNode()
+    {
+        NavigationManager.NavigateTo($"/node/{Id}");
+    }
+
+    async Task TestNode()
+    {
+        var result = await NodeService.GetNodeVersion(Id);
+        if (!result.Success)
+        {
+            message = result.Message;
+        }
+        else
+        {
+            version = result.Data.Version;
+        }
+    }
+}

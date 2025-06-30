@@ -1,0 +1,128 @@
+﻿<Bar Breakpoint="Breakpoint.Desktop" NavigationBreakpoint="Breakpoint.Tablet" ThemeContrast="ThemeContrast.Dark"
+     Mode="BarMode.VerticalInline" CollapseMode="BarCollapseMode.Small">
+    <BarToggler />
+    <BarBrand>
+        <BarItem>
+            <BarLink To="">
+                <BarIcon IconName="customIcon" />
+                WebApp
+            </BarLink>
+        </BarItem>
+    </BarBrand>
+    <BarMenu>
+        <BarStart>
+            <BarItem>
+                <BarLink To="/">
+                    <BarIcon IconName="IconName.Dashboard" />
+                    Dashboard
+                </BarLink>
+            </BarItem>
+            <BarItem>
+                <BarDropdown @bind-Visible="radarrBarVisible">
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.Video" />
+                        Radarr
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="/simple-form">Simple Form</BarDropdownItem>
+                    </BarDropdownMenu>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="/simple-datagrid">Simple DataGrid</BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+            <BarItem>
+                <BarDropdown @bind-Visible="sonarrBarVisible">
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.Tv" />
+                        Sonarr
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="/simple-form">Simple Form</BarDropdownItem>
+                    </BarDropdownMenu>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="/simple-datagrid">Simple DataGrid</BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+            <BarItem>
+                <BarDropdown @bind-Visible="lidarrBarVisible">
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.Music" />
+                        Lidarr
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="/simple-form">Simple Form</BarDropdownItem>
+                    </BarDropdownMenu>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="/simple-datagrid">Simple DataGrid</BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+            <BarItem>
+                <BarDropdown @bind-Visible="readarrBarVisible">
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.Book" />
+                        Readarr
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="/simple-form">Simple Form</BarDropdownItem>
+                    </BarDropdownMenu>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="/simple-datagrid">Simple DataGrid</BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+            <BarItem>
+                <BarDropdown @bind-Visible="nodeBarVisible">
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.Dashboard" />
+                        Nodes
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="/nodes">Nodes</BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+            <BarItem>
+                <BarDropdown @bind-Visible="pagesBarVisible">
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.Edit" />
+                        Pages
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="/simple-form">Simple Form</BarDropdownItem>
+                    </BarDropdownMenu>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="/simple-datagrid">Simple DataGrid</BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+        </BarStart>
+        <BarEnd>
+            <BarItem>
+                <BarDropdown>
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.Smartphone" />
+                        Apps
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="/apps/todo">
+                            Todo
+                        </BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+        </BarEnd>
+    </BarMenu>
+</Bar>
+@code {
+    private bool lidarrBarVisible = false;
+    private bool nodeBarVisible = false;
+    private bool pagesBarVisible = true;
+    private bool radarrBarVisible = false;
+    private bool readarrBarVisible = false;
+    private bool sonarrBarVisible = false;
+
+    RenderFragment customIcon =@<img src="/brand-logo.png" style="width:32px; height: 32px" />;
+}

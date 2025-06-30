@@ -1,0 +1,13 @@
+﻿//global using API.Data;
+//global using API.Services.LogService;
+//global using API.Services.NodeService;
+//global using API.Services.RadarrService;
+global using Mapster;
+global using Microsoft.EntityFrameworkCore;
+global using Shared;
+//global using Shared.DTOs.Node;
+global using Shared.Entities;
+//global using Shared.Entities.Lidarr;
+//global using Shared.Entities.Radarr;
+//global using Shared.Entities.Readarr;
+//global using Shared.Entities.Sonarr;

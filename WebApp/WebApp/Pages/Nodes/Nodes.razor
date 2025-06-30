@@ -1,0 +1,139 @@
+﻿@page "/nodes"
+@using Blazorise.Snackbar
+@using WebApp.Services.NodeService
+@inject INodeService NodeService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+@* @rendermode InteractiveServer *@
+
+<PageTitle>Nodes</PageTitle>
+<h3>Nodes</h3>
+
+<Snackbar @ref="successSnackbar" Color="SnackbarColor.Success">
+    <SnackbarBody>
+        Version retrieved successfully!
+        <SnackbarAction Clicked="@(() => successSnackbar.Hide())">❌</SnackbarAction>
+    </SnackbarBody>
+</Snackbar>
+<Snackbar @ref="errorSnackbar" Color="SnackbarColor.Danger">
+    <SnackbarBody>
+        Failed to retrieve version.
+        <SnackbarAction Clicked="@(() => errorSnackbar.Hide())">❌</SnackbarAction>
+    </SnackbarBody>
+</Snackbar>
+
+@if (NodeService.ActiveNodes == null)
+{
+    <p><em>Loading Nodes...</em></p>
+}
+else
+{
+    <Table>
+        <TableHeader ThemeContrast="ThemeContrast.Dark">
+            <TableRow>
+                <TableHeaderCell>#</TableHeaderCell>
+                <TableHeaderCell>Alias</TableHeaderCell>
+                <TableHeaderCell>Parent App</TableHeaderCell>
+                <TableHeaderCell>Base Url</TableHeaderCell>
+                <TableHeaderCell>Api Key</TableHeaderCell>
+                <TableHeaderCell>Status</TableHeaderCell>
+                <TableHeaderCell></TableHeaderCell>
+            </TableRow>
+        </TableHeader>
+        <TableBody>
+            @foreach (var node in NodeService.ActiveNodes)
+            {
+                <TableRow>
+                    <TableRowHeader>@node.Id</TableRowHeader>
+                    <TableRowCell>@node.ApplicationAlias</TableRowCell>
+                    <TableRowCell>@node.ParentApplication</TableRowCell>
+                    <TableRowCell>@node.BaseUrl</TableRowCell>
+                    <TableRowCell>@node.ApiKey</TableRowCell>
+                    <TableRowCell>
+                        @if (nodeVersions.ContainsKey(node.Id) && !string.IsNullOrEmpty(nodeVersions[node.Id]))
+                        {
+                            <Badge Color="Color.Success"> @nodeVersions[node.Id] </Badge>
+                        }
+                        else
+                        {
+                            <Badge Color="Color.Danger"> Disconnected </Badge>
+                        }
+                    </TableRowCell>
+                    <TableRowCell>
+                        <Button Color="Color.Primary" Clicked="@(() => Show(node.Id))">Show</Button>
+                        <Button Color="Color.Primary" Clicked="@(() => Edit(node.Id))">Edit</Button>
+                        <Button Color="Color.Primary" Clicked="@(() => SoftDelete(node.Id))">Delete</Button>
+                        <Button Color="Color.Primary" Clicked="@(() => Test(node.Id))">Test Connection</Button>
+                    </TableRowCell>
+                </TableRow>
+            }
+        </TableBody>
+    </Table>
+    <Button Color="Color.Primary" Clicked="@(() => Create())">Create</Button>
+}
+
+@code {
+    private Dictionary<int, string> nodeVersions = new Dictionary<int, string>();
+    private Snackbar successSnackbar;
+    private Snackbar errorSnackbar;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await NodeService.GetAllActive();
+    }
+
+    // Button Events
+    void Create()
+    {
+        NavigationManager.NavigateTo("/node");
+    }
+
+    void Edit(int id)
+    {
+        NavigationManager.NavigateTo($"/node/{id}");
+    }
+
+    void Show(int id)
+    {
+        NavigationManager.NavigateTo($"/nodes/{id}");
+    }
+
+    // Task Methods
+    async Task SoftDelete(int id)
+    {
+        bool confirmed = await JS.InvokeAsync<bool>("confirm", "Are you sure?");
+        if (confirmed)
+        {
+            await NodeService.SoftDeleteById(id);
+            await NodeService.GetAllActive(); // Reload active campaigns
+            await NodeService.GetAllInactive(); // Reload inactive campaigns
+            // CampaignStateService.NotifyStateChanged(); // Notify state change
+        }
+    }
+
+    async Task Test(int id)
+    {
+        try
+        {
+            var node = NodeService.ActiveNodes?.FirstOrDefault(n => n.Id == id);
+            if (node != null)
+            {
+                var response = await NodeService.GetNodeVersion(id);
+                if (response != null && response.Success && response.Data != null)
+                {
+                    nodeVersions[id] = response.Data.Version;
+                    await successSnackbar.Show();
+                }
+                else
+                {
+                    await errorSnackbar.Show();
+                }
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            await errorSnackbar.Show();
+        }
+    }
+}

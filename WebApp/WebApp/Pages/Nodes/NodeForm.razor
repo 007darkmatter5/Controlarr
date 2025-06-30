@@ -1,0 +1,156 @@
+﻿@page "/node"
+@page "/node/{id:int}"
+@using Blazorise.Snackbar
+@using Shared
+@using Shared.Entities.Nodes
+@using WebApp.Services.NodeService
+@inject INodeService NodeService
+@inject NavigationManager NavigationManager
+@* @rendermode InteractiveServer *@
+
+<PageTitle>@(Id == null ? "Create a new node" : $"Edit {dbObject.ApplicationAlias}")</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-6 bg-light border p-3">
+            <EditForm Model="@dbObject" OnSubmit="HandleSubmit">
+                <div class="header-row">
+                    <h3>Node</h3>
+                    <span class="edit-mode">
+                        @if (Id == null)
+                        {
+                            <span class="badge rounded-pill text-bg-primary">Create mode</span>
+                        }
+                        else
+                        {
+                            <span class="badge rounded-pill text-bg-warning">Edit mode</span>
+                        }
+                    </span>
+                </div>
+                <hr style="border: 2px solid #660000;" />
+                <div class="form-group">
+                    <label>Parent Application</label>
+                    <InputRadioGroup @bind-Value="dbObject.ParentApplication" class="form-check">
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" Value="@("Radarr")" id="radarr" />
+                            <label class="form-check-label" for="radarr">Radarr</label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" Value="@("Sonarr")" id="sonarr" />
+                            <label class="form-check-label" for="sonarr">Sonarr</label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" Value="@("Lidarr")" id="lidarr" />
+                            <label class="form-check-label" for="lidarr">Lidarr</label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" Value="@("Readarr")" id="readarr" />
+                            <label class="form-check-label" for="readarr">Readarr</label>
+                        </div>
+                    </InputRadioGroup>
+                </div>
+                <div class="form-group">
+                    <label for="alias">Alias</label>
+                    <InputText id="alias" class="form-control" placeholder="Alias" @bind-Value=dbObject.ApplicationAlias />
+                </div>
+                <div class="form-group">
+                    <label for="baseUrl">Base URL</label>
+                    <InputText id="baseUrl" class="form-control" placeholder="Base URL" @bind-Value=dbObject.BaseUrl />
+                </div>
+                <div class="form-group">
+                    <label for="apiKey">API Key</label>
+                    <InputText id="apiKey" class="form-control" placeholder="API Key" @bind-Value=dbObject.ApiKey />
+                </div>
+                <p></p>
+                <button type="submit" class="btn btn-primary">@btnText</button><button class="btn btn-primary mx-3" @onclick="(() => Cancel())">Cancel</button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
+    @if (showToast)
+    {
+        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">@toastHeader</strong>
+                <button type="button" class="btn-close" aria-label="Close" @onclick="() => showToast = false"></button>
+            </div>
+            <div class="toast-body">
+                @toastMessage
+            </div>
+        </div>
+    }
+</div>
+
+        @code {
+        [Parameter]
+        public int? Id { get; set; }
+
+        private Node dbObject { get; set; } = new Node();
+        private string message = string.Empty;
+        private string btnText = "Create node";
+
+        private bool showToast = false;
+        private string toastMessage = string.Empty;
+        private string toastHeader = "Notificatiopn";
+        Snackbar snackbar;
+
+        protected override async Task OnParametersSetAsync()
+        {
+            if (Id == null)
+            {
+                btnText = "Create node";
+            }
+            else
+            {
+                btnText = "Edit node";
+                var result = await NodeService.GetById((int)Id);
+                if (result is null)
+                {
+                    message = "Nothing found.";
+                }
+                else
+                {
+                    dbObject = result.Data;
+                }
+            }
+        }
+
+        async Task HandleSubmit()
+        {
+            ServiceResponse<Node> response;
+
+            if (Id == null)
+            {
+                response = await NodeService.Create(dbObject);
+            }
+            else
+            {
+                response = await NodeService.Update(dbObject);
+            }
+
+            if (response.Success)
+            {
+                ShowToast("Success", "Node saved successfully!");
+                NavigationManager.NavigateTo("/nodes");
+            }
+            else
+            {
+                ShowToast("Error", response.Message ?? "An erroc occurred.");
+            }
+        }
+
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("/nodes");
+        }
+
+        void ShowToast(string header, string message)
+        {
+            toastHeader = header;
+            toastMessage = message;
+            showToast = true;
+            StateHasChanged();
+        }
+}
