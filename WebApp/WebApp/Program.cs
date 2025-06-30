@@ -12,7 +12,7 @@ AddBlazorise(builder.Services);
 
 builder.Services.AddHttpClient("LocalApi", client =>
 {
-	client.BaseAddress = new Uri("https://localhost:7197");
+	client.BaseAddress = new Uri("https://localhost:7234");
 	client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 

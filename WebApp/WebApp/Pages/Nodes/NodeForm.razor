@@ -30,7 +30,13 @@
                 <hr style="border: 2px solid #660000;" />
                 <div class="form-group">
                     <label>Parent Application</label>
-                    <InputRadioGroup @bind-Value="dbObject.ParentApplication" class="form-check">
+                    <RadioGroup TValue="string" Name="parentApplication" @bind-CheckedValue="@dbObject.ParentApplication">
+                        <Radio Value="@("radarr")">Radarr</Radio>
+                        <Radio Value="@("sonarr")">Sonarr</Radio>
+                        <Radio Value="@("lidarr")">Lidarr</Radio>
+                        <Radio Value="@("readarr")">Readarr</Radio>
+                    </RadioGroup>
+                   @*  <InputRadioGroup @bind-Value="dbObject.ParentApplication" class="form-check">
                         <div class="form-check">
                             <InputRadio class="form-check-input" Value="@("Radarr")" id="radarr" />
                             <label class="form-check-label" for="radarr">Radarr</label>
@@ -47,7 +53,7 @@
                             <InputRadio class="form-check-input" Value="@("Readarr")" id="readarr" />
                             <label class="form-check-label" for="readarr">Readarr</label>
                         </div>
-                    </InputRadioGroup>
+                    </InputRadioGroup> *@
                 </div>
                 <div class="form-group">
                     <label for="alias">Alias</label>
