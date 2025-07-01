@@ -1,5 +1,5 @@
 using API.Data;
-using API.Factories.NodeClientFactory;
+//using API.Factories.NodeClientFactory;
 using API.Services.LogService;
 using API.Services.NodeService;
 using API.Services.RadarrService;
@@ -16,9 +16,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddHttpClient();
+//builder.Services.AddSingleton<INodeClientFactory, NodeClientFactory>();
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<INodeService, NodeService>();
-builder.Services.AddScoped<INodeClientFactory, NodeClientFactory>();
 builder.Services.AddScoped<IRadarrService, RadarrService>();
 
 //builder.Services.AddHttpClient();

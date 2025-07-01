@@ -78,7 +78,7 @@ namespace API.Services.NodeService
 			return response;
 		}
 
-		public async Task<ServiceResponse<Node?>> GetByApplicationAlias(string applicationAlias)
+		public async Task<ServiceResponse<NodeResponse?>> GetByApplicationAlias(string applicationAlias)
 		{
 			var dbObject = await _dataContext.Nodes
 				.Where(x => x.ApplicationAlias.ToLower() ==  applicationAlias.ToLower() && !x.IsDeleted)
@@ -86,7 +86,7 @@ namespace API.Services.NodeService
 
 			if (dbObject == null)
 			{
-				return new ServiceResponse<Node?>
+				return new ServiceResponse<NodeResponse?>
 				{
 					Data = null,
 					Success = false,
@@ -94,11 +94,11 @@ namespace API.Services.NodeService
 				};
 			}
 
-			//var response = dbObject.Adapt<NodeResponse>();
+			var dbObjectResponse = dbObject.Adapt<NodeResponse>();
 
-			return new ServiceResponse<Node?>
+			return new ServiceResponse<NodeResponse?>
 			{
-				Data = dbObject,
+				Data = dbObjectResponse,
 				Message = "Node found."
 			};
 		}

@@ -44,7 +44,14 @@ namespace API.Controllers
 			return Ok(result);
 		}
 
-		[HttpGet("app/{parentApplicationName}")]
+		[HttpGet("alias/{applicationAlias}")]
+		public async Task<ActionResult<Node>> GetByApplicationAlias(string applicationAlias)
+		{
+			var result = await _nodeService.GetByApplicationAlias(applicationAlias);
+			return Ok(result);
+		}
+
+		[HttpGet("parent/{parentApplicationName}")]
 		public async Task<ActionResult<Node>> GetByParentApplication(string parentApplicationName)
 		{
 			var result = await _nodeService.GetByParentApplication(parentApplicationName);
