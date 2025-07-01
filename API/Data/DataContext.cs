@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Shared.Entities.Logs;
 using Shared.Entities.Nodes;
 
 namespace API.Data
@@ -7,7 +8,7 @@ namespace API.Data
 	{
 		public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
-		//public DbSet<AppLog> Logs { get; set; }
+		public DbSet<LogEntry> Logs { get; set; }
 		public DbSet<Node> Nodes { get; set; }
 	}
 }

@@ -2,106 +2,74 @@
 @page "/node/{id:int}"
 @using Blazorise.Snackbar
 @using Shared
+@using Shared.Entities.Logs
 @using Shared.Entities.Nodes
+@using WebApp.Services.LogService
 @using WebApp.Services.NodeService
+@inject ILogService LogService
 @inject INodeService NodeService
 @inject NavigationManager NavigationManager
 @* @rendermode InteractiveServer *@
 
 <PageTitle>@(Id == null ? "Create a new node" : $"Edit {dbObject.ApplicationAlias}")</PageTitle>
 
-<Row>
-    <Column ColumnSize="ColumnSize.Is6.OnDesktop">
-        <Card Margin="Margin.Is4.FromBottom">
+<Form Style="width: 500px;">
+    <Validations @ref="validations" Mode="ValidationMode.Auto" Model="@dbObject" ValidateOnLoad="false">
+        <Card Class="m-3">
             <CardHeader>
-                <CardTitle>Node</CardTitle>
+                <CardTitle>@(Id.HasValue ? $"Edit {dbObject.ApplicationAlias}" : "Add New Node")</CardTitle>
             </CardHeader>
             <CardBody>
-                <Field Horizontal>
-                    <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">Alias</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is9.OnDesktop">
-                        <TextEdit Placeholder="Alias" />
-                    </FieldBody>
-                </Field>
-                <Field Horizontal>
-                    <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">Base URL</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is9.OnDesktop">
-                        <TextEdit Placeholder="Base URL" />
-                    </FieldBody>
-                </Field>
-                <Field Horizontal>
-                    <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">API Key</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is9.OnDesktop">
-                        <TextEdit Placeholder="API Key" />
-                    </FieldBody>
-                </Field>
-            </CardBody>
-        </Card>
-    </Column>
-</Row>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-6 bg-light border p-3">
-            <EditForm Model="@dbObject" OnSubmit="HandleSubmit">
-                <div class="header-row">
-                    <h3>Node</h3>
-                    <span class="edit-mode">
-                        @if (Id == null)
-                        {
-                            <span class="badge rounded-pill text-bg-primary">Create mode</span>
-                        }
-                        else
-                        {
-                            <span class="badge rounded-pill text-bg-warning">Edit mode</span>
-                        }
-                    </span>
-                </div>
-                <hr style="border: 2px solid #660000;" />
-                <div class="form-group">
-                    <label>Parent Application</label>
-                    <RadioGroup TValue="string" Name="parentApplication" @bind-CheckedValue="@dbObject.ParentApplication">
-                        <Radio Value="@("radarr")">Radarr</Radio>
-                        <Radio Value="@("sonarr")">Sonarr</Radio>
-                        <Radio Value="@("lidarr")">Lidarr</Radio>
-                        <Radio Value="@("readarr")">Readarr</Radio>
+                <Field>
+                    <FieldLabel>Parent Application</FieldLabel>
+                    <RadioGroup @bind-CheckedValue="@dbObject.ParentApplication" Name="parentApplication">
+                        <Radio Value="@("Radarr")">Radarr</Radio>
+                        <Radio Value="@("Sonarr")">Sonarr</Radio>
+                        <Radio Value="@("Lidarr")">Lidarr</Radio>
+                        <Radio Value="@("Readarr")">Readarr</Radio>
                     </RadioGroup>
-                   @*  <InputRadioGroup @bind-Value="dbObject.ParentApplication" class="form-check">
-                        <div class="form-check">
-                            <InputRadio class="form-check-input" Value="@("Radarr")" id="radarr" />
-                            <label class="form-check-label" for="radarr">Radarr</label>
-                        </div>
-                        <div class="form-check">
-                            <InputRadio class="form-check-input" Value="@("Sonarr")" id="sonarr" />
-                            <label class="form-check-label" for="sonarr">Sonarr</label>
-                        </div>
-                        <div class="form-check">
-                            <InputRadio class="form-check-input" Value="@("Lidarr")" id="lidarr" />
-                            <label class="form-check-label" for="lidarr">Lidarr</label>
-                        </div>
-                        <div class="form-check">
-                            <InputRadio class="form-check-input" Value="@("Readarr")" id="readarr" />
-                            <label class="form-check-label" for="readarr">Readarr</label>
-                        </div>
-                    </InputRadioGroup> *@
-                </div>
-                <div class="form-group">
-                    <label for="alias">Alias</label>
-                    <InputText id="alias" class="form-control" placeholder="Alias" @bind-Value=dbObject.ApplicationAlias />
-                </div>
-                <div class="form-group">
-                    <label for="baseUrl">Base URL</label>
-                    <InputText id="baseUrl" class="form-control" placeholder="Base URL" @bind-Value=dbObject.BaseUrl />
-                </div>
-                <div class="form-group">
-                    <label for="apiKey">API Key</label>
-                    <InputText id="apiKey" class="form-control" placeholder="API Key" @bind-Value=dbObject.ApiKey />
-                </div>
-                <p></p>
-                <button type="submit" class="btn btn-primary">@btnText</button><button class="btn btn-primary mx-3" @onclick="(() => Cancel())">Cancel</button>
-            </EditForm>
-        </div>
-    </div>
-</div>
+                </Field>
+                <Validation>
+                    <Field>
+                        <FieldLabel>Alias</FieldLabel>
+                        <TextEdit @bind-Text="@dbObject.ApplicationAlias" />
+                        <ValidationMessage For="@(() => dbObject.ApplicationAlias)" />
+                    </Field>
+                </Validation>
+                <Validation>
+                    <Field>
+                        <FieldLabel>Base URL</FieldLabel>
+                        <TextEdit @bind-Text="@dbObject.BaseUrl" />
+                        <ValidationMessage For="@(() => dbObject.BaseUrl)" />
+                    </Field>
+                </Validation>
+                <Validation>
+                    <Field>
+                        <FieldLabel>API Key</FieldLabel>
+                        <TextEdit @bind-Text="@dbObject.ApiKey" />
+                        <ValidationMessage For="@(() => dbObject.ApiKey)" />
+                    </Field>
+                </Validation>
+                @if (!string.IsNullOrEmpty(version))
+                {
+                    <Alert Color="Color.Success" Class="mt-2">
+                        <Strong>Version:</Strong> @version
+                    </Alert>
+                }
+            </CardBody>
+            <CardFooter>
+                <Buttons>
+                    <Button Color="Color.Primary" Type="ButtonType.Submit" Clicked="@HandleSubmit">Save</Button>
+                    <Button Color="Color.Secondary" Clicked="@Cancel">Cancel</Button>
+                    @if (Id.HasValue)
+                    {
+                        <Button Color="Color.Info" Clicked="@GetVersion">Get Version</Button>
+                    }
+                </Buttons>
+            </CardFooter>
+        </Card>
+    </Validations>
+</Form>
 
 <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
     @if (showToast)
@@ -118,74 +86,109 @@
     }
 </div>
 
-        @code {
-        [Parameter]
-        public int? Id { get; set; }
+@code {
+    [Parameter]
+    public int? Id { get; set; }
 
-        private Node dbObject { get; set; } = new Node();
-        private string message = string.Empty;
-        private string btnText = "Create node";
+    private Node dbObject { get; set; } = new Node();
+    private Validations validations;
+    private string version = string.Empty;
+    private string message = string.Empty;
+    private string btnText = "Create node";
 
-        private bool showToast = false;
-        private string toastMessage = string.Empty;
-        private string toastHeader = "Notificatiopn";
-        Snackbar snackbar;
+    private bool showToast = false;
+    private string toastMessage = string.Empty;
+    private string toastHeader = "Notificatiopn";
+    Snackbar snackbar;
 
-        protected override async Task OnParametersSetAsync()
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id == null)
         {
-            if (Id == null)
+            btnText = "Create node";
+        }
+        else
+        {
+            btnText = "Edit node";
+            var result = await NodeService.GetById((int)Id);
+            if (result is null)
             {
-                btnText = "Create node";
+                message = "Nothing found.";
             }
             else
             {
-                btnText = "Edit node";
-                var result = await NodeService.GetById((int)Id);
-                if (result is null)
-                {
-                    message = "Nothing found.";
-                }
-                else
-                {
-                    dbObject = result.Data;
-                }
+                dbObject = result.Data;
             }
         }
+    }
 
-        async Task HandleSubmit()
+    async Task HandleSubmit()
+    {
+        ServiceResponse<Node> response;
+
+        if (Id == null)
         {
-            ServiceResponse<Node> response;
-
-            if (Id == null)
-            {
-                response = await NodeService.Create(dbObject);
-            }
-            else
-            {
-                response = await NodeService.Update(dbObject);
-            }
-
-            if (response.Success)
-            {
-                ShowToast("Success", "Node saved successfully!");
-                NavigationManager.NavigateTo("/nodes");
-            }
-            else
-            {
-                ShowToast("Error", response.Message ?? "An erroc occurred.");
-            }
+            response = await NodeService.Create(dbObject);
+        }
+        else
+        {
+            response = await NodeService.Update(dbObject);
         }
 
-        void Cancel()
+        if (response.Success)
         {
+            var log = new LogEntry
+            {
+                Level = LogLevel.Information,
+                Source = "NodeForm",
+                Message = Id == null
+                    ? $"Created new node: {dbObject.ApplicationAlias}"
+                    : $"Updated node: {dbObject.ApplicationAlias}"
+            };
+
+            await LogService.Create(log);
+
+            ShowToast("Success", "Node saved successfully!");
             NavigationManager.NavigateTo("/nodes");
         }
-
-        void ShowToast(string header, string message)
+        else
         {
-            toastHeader = header;
-            toastMessage = message;
-            showToast = true;
-            StateHasChanged();
+            ShowToast("Error", response.Message ?? "An erroc occurred.");
         }
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/nodes");
+    }
+
+    async Task GetVersion()
+    {
+        if (!Id.HasValue)
+            return;
+
+        var result = await NodeService.GetNodeVersion(Id.Value);
+
+        Console.WriteLine($"GetNodeVersion result: Success = {result.Success}, Version = {result.Data?.Version}");
+
+        if (result.Success && result.Data != null)
+        {
+            version = result.Data.Version;
+        }
+        else
+        {
+            version = "Not connected";
+            ShowToast("Error", result.Message ?? "Could not retrieve version.");
+        }
+
+        StateHasChanged();
+    }
+
+    void ShowToast(string header, string message)
+    {
+        toastHeader = header;
+        toastMessage = message;
+        showToast = true;
+        StateHasChanged();
+    }
 }

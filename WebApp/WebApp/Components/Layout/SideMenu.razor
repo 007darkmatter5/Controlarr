@@ -85,6 +85,17 @@
                 </BarDropdown>
             </BarItem>
             <BarItem>
+                <BarDropdown @bind-Visible="settingBarVisible">
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.Settings" />
+                        Settings
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="/logs">Logs</BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+            <BarItem>
                 <BarDropdown @bind-Visible="pagesBarVisible">
                     <BarDropdownToggle>
                         <BarIcon IconName="IconName.Edit" />
@@ -122,6 +133,7 @@
     private bool pagesBarVisible = true;
     private bool radarrBarVisible = false;
     private bool readarrBarVisible = false;
+    private bool settingBarVisible = false;
     private bool sonarrBarVisible = false;
 
     RenderFragment customIcon =@<img src="/brand-logo.png" style="width:32px; height: 32px" />;

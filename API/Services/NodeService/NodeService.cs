@@ -78,6 +78,31 @@ namespace API.Services.NodeService
 			return response;
 		}
 
+		public async Task<ServiceResponse<Node?>> GetByApplicationAlias(string applicationAlias)
+		{
+			var dbObject = await _dataContext.Nodes
+				.Where(x => x.ApplicationAlias.ToLower() ==  applicationAlias.ToLower() && !x.IsDeleted)
+				.FirstOrDefaultAsync();
+
+			if (dbObject == null)
+			{
+				return new ServiceResponse<Node?>
+				{
+					Data = null,
+					Success = false,
+					Message = $"No active node found with ApplicationAlias = '{applicationAlias}'."
+				};
+			}
+
+			//var response = dbObject.Adapt<NodeResponse>();
+
+			return new ServiceResponse<Node?>
+			{
+				Data = dbObject,
+				Message = "Node found."
+			};
+		}
+
 		public async Task<ServiceResponse<NodeResponse?>> GetById(int id)
 		{
 			var dbObject = await _dataContext.Nodes
