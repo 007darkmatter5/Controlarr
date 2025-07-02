@@ -1,7 +1,4 @@
-﻿using Shared.DTOs.Node;
-using Shared.Entities.Nodes;
-
-namespace API.Services.NodeService
+﻿namespace API.Services.NodeService
 {
 	public interface INodeService
 	{

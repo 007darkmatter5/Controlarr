@@ -1,7 +1,4 @@
-﻿using API.Data;
-using Shared.Entities.Logs;
-
-namespace API.Services.LogService
+﻿namespace API.Services.LogService
 {
 	public class LogService : ILogService
 	{

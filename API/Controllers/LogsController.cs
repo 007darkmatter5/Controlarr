@@ -1,7 +1,4 @@
-﻿using API.Services.LogService;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Shared.Entities.Logs;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {

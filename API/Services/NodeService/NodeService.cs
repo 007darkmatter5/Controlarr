@@ -1,11 +1,4 @@
-﻿using API.Data;
-using Shared.DTOs.Node;
-using Shared.Entities.Lidarr;
-using Shared.Entities.Nodes;
-using Shared.Entities.Radarr;
-using Shared.Entities.Readarr;
-using Shared.Entities.Sonarr;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace API.Services.NodeService
 {

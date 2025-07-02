@@ -1,12 +1,8 @@
-﻿using Shared;
-using Shared.DTOs.Node;
-using Shared.Entities.Nodes;
-
-namespace WebApp.Services.NodeService
+﻿namespace WebApp.Services.NodeService
 {
 	public interface INodeService
 	{
-		event Action? OnChange;
+		//event Action? OnChange;
 		List<Node> ActiveNodes { get; set; }
 		List<Node> InactiveNodes { get; set; }
 		Task<ServiceResponse<Node>> Create(Node node);

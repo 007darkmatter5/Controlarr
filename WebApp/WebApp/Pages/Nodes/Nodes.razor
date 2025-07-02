@@ -1,10 +1,8 @@
 ﻿@page "/nodes"
-@using Blazorise.Snackbar
-@using WebApp.Services.NodeService
-@inject INodeService NodeService
-@inject NavigationManager NavigationManager
 @inject IJSRuntime JS
-@* @rendermode InteractiveServer *@
+@inject NavigationManager NavigationManager
+@inject ILogService LogService
+@inject INodeService NodeService
 
 <PageTitle>Nodes</PageTitle>
 <h3>Nodes</h3>
@@ -115,17 +113,35 @@ else
     {
         try
         {
-            var node = NodeService.ActiveNodes?.FirstOrDefault(n => n.Id == id);
-            if (node != null)
+            var dbObject = NodeService.ActiveNodes?.FirstOrDefault(n => n.Id == id);
+            if (dbObject != null)
             {
                 var response = await NodeService.GetNodeVersion(id);
                 if (response != null && response.Success && response.Data != null)
                 {
+                    var log = new LogEntry
+                    {
+                        Level = LogLevel.Information,
+                        Source = "NodeForm",
+                        Message = $"Node: '{dbObject.ApplicationAlias}' connection tested, successful"
+                    };
+
+                    await LogService.Create(log);
+
                     nodeVersions[id] = response.Data.Version;
                     await successSnackbar.Show();
                 }
                 else
                 {
+                    var log = new LogEntry
+                    {
+                        Level = LogLevel.Error,
+                        Source = "NodeForm",
+                        Message = $"Node: '{dbObject.ApplicationAlias}' connection tested, unsuccessful"
+                    };
+
+                    await LogService.Create(log);
+
                     await errorSnackbar.Show();
                 }
                 StateHasChanged();

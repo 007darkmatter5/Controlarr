@@ -1,7 +1,5 @@
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
-using WebApp.Services.LogService;
-using WebApp.Services.NodeService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +17,8 @@ builder.Services.AddHttpClient("LocalApi", client =>
 
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<INodeService, NodeService>();
+builder.Services.AddScoped<IRadarrService, RadarrService>();
+builder.Services.AddScoped<ITmdbService, TmdbService>();
 
 var app = builder.Build();
 

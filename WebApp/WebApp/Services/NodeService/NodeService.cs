@@ -1,9 +1,4 @@
-﻿using Shared;
-using Shared.DTOs.Node;
-using Shared.Entities.Nodes;
-using System.Net.Http;
-
-namespace WebApp.Services.NodeService
+﻿namespace WebApp.Services.NodeService
 {
 	public class NodeService : INodeService
 	{
@@ -16,7 +11,7 @@ namespace WebApp.Services.NodeService
 		public List<Node> ActiveNodes { get; set; }
 		public List<Node> InactiveNodes { get; set; }
 
-		public event Action? OnChange;
+		//public event Action? OnChange;
 
 		public async Task<ServiceResponse<Node>> Create(Node node)
 		{

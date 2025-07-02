@@ -1,7 +1,4 @@
-﻿using Shared;
-using Shared.Entities.Logs;
-
-namespace WebApp.Services.LogService
+﻿namespace WebApp.Services.LogService
 {
 	public interface ILogService
 	{

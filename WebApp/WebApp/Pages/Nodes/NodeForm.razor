@@ -1,15 +1,8 @@
 ﻿@page "/node"
 @page "/node/{id:int}"
-@using Blazorise.Snackbar
-@using Shared
-@using Shared.Entities.Logs
-@using Shared.Entities.Nodes
-@using WebApp.Services.LogService
-@using WebApp.Services.NodeService
+@inject NavigationManager NavigationManager
 @inject ILogService LogService
 @inject INodeService NodeService
-@inject NavigationManager NavigationManager
-@* @rendermode InteractiveServer *@
 
 <PageTitle>@(Id == null ? "Create a new node" : $"Edit {dbObject.ApplicationAlias}")</PageTitle>
 
@@ -167,18 +160,18 @@
         if (!Id.HasValue)
             return;
 
-        var result = await NodeService.GetNodeVersion(Id.Value);
+        var response = await NodeService.GetNodeVersion(Id.Value);
 
-        Console.WriteLine($"GetNodeVersion result: Success = {result.Success}, Version = {result.Data?.Version}");
+        Console.WriteLine($"GetNodeVersion result: Success = {response.Success}, Version = {response.Data?.Version}");
 
-        if (result.Success && result.Data != null)
+        if (response.Success && response.Data != null)
         {
-            version = result.Data.Version;
+            version = response.Data.Version;
         }
         else
         {
             version = "Not connected";
-            ShowToast("Error", result.Message ?? "Could not retrieve version.");
+            ShowToast("Error", response.Message ?? "Could not retrieve version.");
         }
 
         StateHasChanged();

@@ -1,0 +1,39 @@
+﻿@page "/tmdb-search"
+@using Shared.Entities.TMDB
+@inject ITmdbService TmdbService
+
+<h3>TMDB Movie Search</h3>
+
+<input @bind="searchQuery" placeholder="Search for a movie..." class="form-control" />
+<Button Class="btn btn-primary mt-2" @onclick="Search">Search</Button>
+
+@if (searchResults is not null)
+{
+    <Div Class="mt-4">
+        <p><Strong>Page:</Strong> @searchResults.page</p>
+        <p><Strong>Total Page:</Strong> @searchResults.total_pages</p>
+        <p><Strong>Total Results:</Strong> @searchResults.total_results</p>
+    </Div>
+
+    <ul class="mt-3">
+        @foreach (var movie in searchResults.results)
+        {
+            <li>
+                <strong>@movie.title</strong> (@movie.release_date)
+                <br />
+                <em>@movie.overview</em>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private string searchQuery = string.Empty;
+    private TmdbMovieSearchResponse? searchResults;
+    private int currentPage = 1;
+
+    private async Task Search()
+    {
+        searchResults = await TmdbService.SearchMovieAsync(searchQuery);
+    }
+}

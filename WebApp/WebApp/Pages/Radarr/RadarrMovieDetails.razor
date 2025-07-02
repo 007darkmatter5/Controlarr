@@ -1,0 +1,74 @@
+﻿@page "/radarr/movies/{id:int}"
+@page "/radarr/movies/imdb/{imdbid}"
+@page "/radarr/movies/tmdb/{tmdbid}"
+@inject NavigationManager NavigationManager
+@inject IRadarrService RadarrService
+
+<PageTitle>Movie Details</PageTitle>
+
+<Div Class="form-container">
+    <Div Class="top-container">
+        @if (dbObject == null)
+        {
+            <Span>@message</Span>
+        }
+        else
+        {
+            <h3>Movie overview</h3>
+            <hr />
+            <p><b>Title: </b>@dbObject.title</p>
+            <p><b>Year: </b>@dbObject.year</p>
+            <p><b>Status: </b>@dbObject.status</p>
+            <p><b>IMDB Id: </b><Blazorise.Link To="@($"https://www.imdb.com/title/{dbObject.imdbId}")">@dbObject.imdbId</Blazorise.Link></p>
+            <p><b>TMDB Id: </b><Blazorise.Link To="@($"https://www.themoviedb.org/movie/{@dbObject.tmdbId}")">@dbObject.tmdbId</Blazorise.Link></p>
+            <p><b>Poster URL: </b>@dbObject.remotePoster</p>
+        }
+        <Button Color="Color.Primary" Clicked="@ShowAll">Back to Nodes</Button>
+    </Div>
+</Div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    [Parameter]
+    public string ImdbId { get; set; } = string.Empty;
+    [Parameter]
+    public string TmdbId { get; set; } = string.Empty;
+
+    private RadarrMovie? dbObject = null;
+    private string message = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        message = "Loading Movie...";
+        ServiceResponse<RadarrMovie>? result = null;
+
+        if (Id > 0)
+        {
+            result = await RadarrService.GetById(Id);
+        }
+        else if (!string.IsNullOrWhiteSpace(ImdbId))
+        {
+            result = await RadarrService.GetMovieLookupImdb(ImdbId);
+        }
+        else if (!string.IsNullOrWhiteSpace(TmdbId))
+        {
+            result = await RadarrService.GetMovieLookupTmdb(TmdbId);
+        }
+
+        if (result is null || !result.Success)
+        {
+            message = result?.Message ?? "Unknown error occurred.";
+        }
+        else
+        {
+            dbObject = result.Data;
+            message = string.Empty;
+        }
+    }
+
+    void ShowAll()
+    {
+        NavigationManager.NavigateTo("/radarr/movies");
+    }
+}

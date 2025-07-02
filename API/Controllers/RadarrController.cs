@@ -1,8 +1,4 @@
-﻿//using API.Factories.NodeClientFactory;
-using API.Services.RadarrService;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Shared.Entities.Radarr;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -10,48 +6,83 @@ namespace API.Controllers
 	[ApiController]
 	public class RadarrController : ControllerBase
 	{
-		//private readonly INodeClientFactory _nodeClientFactory;
+		private readonly IRadarrService _radarrService;
 
-		//public RadarrController(INodeClientFactory nodeClientFactory)
-		//{
-		//	_nodeClientFactory = nodeClientFactory;
-		//}
+		public RadarrController(IRadarrService radarrService)
+		{
+			_radarrService = radarrService;
+		}
 
-		//[HttpGet("movies")]
-		//public async Task<ActionResult<IEnumerable<object>>> GetMovies()
-		//{
-		//	var client = await _nodeClientFactory.CreateClientAsync("Radarr");
-		//	var response = await client.GetAsync("/api/v3/movies");
-		//	response.EnsureSuccessStatusCode();
-		//	var movies = await response.Content.ReadFromJsonAsync<IEnumerable<object>>();
-		//	return Ok(movies);
-		//}
+		[HttpGet("movies")]
+		public async Task<ActionResult<ServiceResponse<List<RadarrMovie>>>> GetAll()
+		{
+			var result = await _radarrService.GetAll();
+			if (!result.Success)
+			{
+				return BadRequest(result);
+			}
 
-		//private readonly IRadarrService _radarrService;
+			return Ok(result);
+		}
 
-		//public RadarrController(IRadarrService radarrService)
-		//{
-		//	_radarrService = radarrService;
-		//}
+		[HttpGet("status")]
+		public async Task<ActionResult<ServiceResponse<RadarrSystemStatus>>> GetStatus()
+		{
+			var result = await _radarrService.GetStatus();
+			if (!result.Success)
+			{
+				return BadRequest(result);
+			}
+			return Ok(result);
+		}
 
-		//[HttpGet("movies")]
-		//public async Task<ActionResult<ServiceResponse<List<RadarrMovie>>>> GetAll()
-		//{
-		//	try
-		//	{
-		//		var movies = await _radarrService.GetAll();
+		[HttpGet("movies/{id}")]
+		public async Task<ActionResult<RadarrMovie>> GetById(int id)
+		{
+			var result = await _radarrService.GetById(id);
+			return Ok(result);
+		}
 
-		//		if (movies == null || !movies.Data.Any())
-		//		{
-		//			return NotFound("No movies found.");
-		//		}
+		[HttpGet("movie/lookup/{term}")]
+		public async Task<ActionResult<ServiceResponse<List<RadarrMovie>>>> GetMovieLookup(string term)
+		{
+			var result = await _radarrService.GetMovieLookup(term);
+			return Ok(result);
+		}
 
-		//		return Ok(movies);
-		//	}
-		//	catch (Exception ex)
-		//	{
-		//		return StatusCode(500, $"An error occurred while fetching movies: {ex.Message}");
-		//	}
-		//}
+		[HttpGet("movie/lookup/imdb/{imdbid}")] //broken
+		public async Task<ActionResult<ServiceResponse<List<RadarrMovie>>>> GetMovieLookupImdb(string imdbid)
+		{
+			var result = await _radarrService.GetMovieLookupImdb(imdbid);
+			return Ok(result);
+		}
+
+		[HttpGet("movie/lookup/tmdb/{tmdbid}")] //broken
+		public async Task<ActionResult<ServiceResponse<List<RadarrMovie>>>> GetMovieLookupTmdb(string tmdbid)
+		{
+			var result = await _radarrService.GetMovieLookupTmdb(tmdbid);
+			return Ok(result);
+		}
+
+		[HttpGet("wanted/missing")] //broken
+		public async Task<ActionResult<ServiceResponse<List<RadarrMovie>>>> GetWantedMissing()
+		{
+			var result = await _radarrService.GetWantedMissing();
+			return Ok(result);
+		}
+
+		[HttpGet("config/naming")]
+		public async Task<ActionResult<ServiceResponse<NamingConfig>>> GetNamingConfig()
+		{
+			var result = await _radarrService.GetNamingConfig();
+			return Ok(result);
+		}
+
+		[HttpGet("config/naming/{id}")] // no need
+		public async Task<ActionResult<ServiceResponse<NamingConfig>>> GetNamingConfigById(int id)
+		{
+			var result = await _radarrService.GetNamingConfigById(id);
+			return Ok(result);
+		}
 	}
 }

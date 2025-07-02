@@ -1,0 +1,33 @@
+﻿@page "/radarr/movies/search"
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+@inject IRadarrService RadarrService
+
+<PageTitle>Radarr / Search for movie</PageTitle>
+<h3>Radarr / Search for movie</h3>
+
+@* <Layout>
+    <Div Class="mb-4">
+        <TextEdit @bind-Text="searchTerm" Placeholder="Enter movie name..." />
+        <Button Color="Color.Primary" Clicked="SearchMovies" Class="ml-2">Search</Button>
+    </Div>
+
+    <DataGrid TItem="rm" Data="@movies" AutoGenerateColumns="false" ShowPager="true">
+        <DataGridColumns>
+            <DataGridColumn TItem="rm" Field="@nameof(rm.AlternateTitle)" Caption="Alternate Title" />
+        </DataGridColumns>
+    </DataGrid>
+</Layout> *@
+
+@code {
+    private string searchTerm = string.Empty;
+    private List<RadarrMovie> movies = new();
+
+    private async Task SearchMovies()
+    {
+        // if (!string.IsNullOrWhiteSpace(searchTerm))
+        // {
+        //     movies = await RadarrService.GetMovieLookup(searchTerm);
+        // }
+    }
+}

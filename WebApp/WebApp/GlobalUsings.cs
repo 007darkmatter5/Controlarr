@@ -1,2 +1,12 @@
 ﻿global using Blazorise;
 global using Blazorise.DataGrid;
+global using Shared;
+global using Shared.DTOs.Node;
+global using Shared.Entities.Logs;
+global using Shared.Entities.Nodes;
+global using Shared.Entities.Radarr;
+global using Shared.Entities.TMDB;
+global using WebApp.Services.LogService;
+global using WebApp.Services.NodeService;
+global using WebApp.Services.RadarrService;
+global using WebApp.Services.TmdbService;

@@ -1,0 +1,44 @@
+﻿@page "/radarr/movies"
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+@inject IRadarrService RadarrService
+
+<PageTitle>Movies</PageTitle>
+<h3>Movies</h3>
+
+@if (RadarrService.Movies == null)
+{
+    <p><em>Loading Movies...</em></p>
+}
+else
+{
+    <DataGrid TItem="RadarrMovie"
+              Data="@RadarrService.Movies"
+              ShowPager="true"
+              PageSize="10"
+              Striped="true"
+              Bordered="true"
+              Hoverable="true"
+              Responsive
+              Filterable>
+        <DataGridColumns>
+            <DataGridColumn TItem="RadarrMovie" Field="@nameof(RadarrMovie.id)" Caption="#" Sortable="true" Width="60px" />
+            <DataGridColumn TItem="RadarrMovie" Field="@nameof(RadarrMovie.title)" Caption="Title" Sortable="true">
+                <DisplayTemplate>
+                    <a href="@($"/radarr/movies/{context.id}")">@context.title</a>
+                </DisplayTemplate>
+            </DataGridColumn>
+            <DataGridColumn TItem="RadarrMovie" Field="@nameof(RadarrMovie.imdbId)" Caption="IMBD ID" Sortable="true" />
+            <DataGridColumn TItem="RadarrMovie" Field="@nameof(RadarrMovie.tmdbId)" Caption="TMDB ID" Sortable="true" />
+            <DataGridColumn TItem="RadarrMovie" Field="@nameof(RadarrMovie.year)" Caption="Year" Sortable="true" />
+            <DataGridColumn TItem="RadarrMovie" Field="@nameof(RadarrMovie.status)" Caption="Status" Sortable="true" />
+        </DataGridColumns>
+    </DataGrid>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await RadarrService.GetAll();
+    }
+}
